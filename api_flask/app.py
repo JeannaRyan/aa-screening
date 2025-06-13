@@ -9,16 +9,6 @@ app = Flask(__name__,
             )
 CORS(app)
 
-@app.route("/")
-def serve_index():
-    # serve the file static/index.html
-    return send_from_directory(app.static_folder, "index.html")
-
-@app.route("/assess", methods=["POST"])
-def assess():
-    # ... your existing assess logic ...
-    return jsonify(recommendations=recs)
-
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=4000, debug=True)
 
