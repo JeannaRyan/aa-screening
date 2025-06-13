@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AA Screening Tool</title>
+</head>
+<body>
+  <h1>AA Screening Tool</h1>
+
+  <form id="screening-form">
+    <label>
+      Age:
+      <input type="number" id="age" required>
+    </label><br><br>
+
+    <label>
+      Subgroup:
+      <select id="subgroup">
+        <option>Asian (aggregated)</option>
+        <option>Asian Indian</option>
+        <option>Chinese</option>
+        <option>Filipino</option>
+        <option>Japanese</option>
+        <option>Korean</option>
+        <option>Vietnamese</option>
+        <option>Other Asian</option>
+      </select>
+    </label><br><br>
+
+    <label>
+      <input type="checkbox" id="family_history">
+      Family history of cancer
+    </label><br><br>
+
+    <label>
+      BMI:
+      <input type="number" step="0.1" id="BMI">
+    </label><br><br>
+
+    <button type="submit">Assess</button>
+  </form>
+
+  <ul id="results"></ul>
+
+  <script>
+    console.log("JS loaded");
+    document.getElementById("screening-form").onsubmit = async function(e) {
+      e.preventDefault();
+      const payload = {
+        age: +document.getElementById("age").value,
+        subgroup: document.getElementById("subgroup").value,
+        last_screenings: {},           // currently unused
+        risk_factors: {
+          family_history: document.getElementById("family_history").checked,
+          BMI: parseFloat(document.getElementById("BMI").value)
+        }
+      };
+      console.log("Submitting payload:", payload);
+
+      try {
+        const res = await fetch("http://localhost:4000/assess", {
+          method: "POST",
+          headers: {"Content-Type":"application/json"},
+          body: JSON.stringify(payload)
+        });
+        console.log("Fetch response:", res);
+        const data = await res.json();
+        console.log("Parsed response JSON:", data);
+
+        const ul = document.getElementById("results");
+        ul.innerHTML = "";
+        if (data.recommendations.length === 0) {
+          ul.innerHTML = "<li>No screenings due</li>";
+        } else {
+          data.recommendations.forEach(r => {
+            const li = document.createElement("li");
+            li.textContent = `${r.screening.toUpperCase()}: ${r.priority} (Score: ${r.risk_score})`;
+            ul.appendChild(li);
+          });
+        }
+      } catch(err) {
+        console.error("Fetch error:", err);
+        alert("Error contacting API: " + err.message);
+      }
+    };
+  </script>
+</body>
+</html>
