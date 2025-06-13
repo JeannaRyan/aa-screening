@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>AA Screening Tool</title>
+  <title>Asian American Colorectal Cancer Screening Tool</title>
 </head>
 <body>
-  <h1>AA Screening Tool</h1>
+  <h1>Asian American Colorectal Cancer Screening Tool</h1>
 
   <form id="screening-form">
     <label>
@@ -16,7 +16,6 @@
     <label>
       Subgroup:
       <select id="subgroup">
-        <option>Asian (aggregated)</option>
         <option>Asian Indian</option>
         <option>Chinese</option>
         <option>Filipino</option>
@@ -29,7 +28,7 @@
 
     <label>
       <input type="checkbox" id="family_history">
-      Family history of cancer
+      Family history of colorectal cancer
     </label><br><br>
 
     <label>
@@ -58,7 +57,7 @@
       console.log("Submitting payload:", payload);
 
       try {
-        const res = await fetch("http://localhost:4000/assess", {
+        const res = await fetch("https://aa-screening-api.onrender.com/assess", {
           method: "POST",
           headers: {"Content-Type":"application/json"},
           body: JSON.stringify(payload)
